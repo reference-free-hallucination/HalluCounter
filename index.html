@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hallu Counter: Reference-free LLM Hallucination Detection</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Use the Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Add a subtle background pattern */
+        body {
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .section-title {
+            @apply text-3xl font-bold text-gray-800 mb-8 text-center;
+        }
+        .card {
+            @apply bg-white rounded-xl shadow-md overflow-hidden p-8 border border-gray-200;
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">Hallucination in LLMs</h1>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#abstract" class="text-gray-600 hover:text-blue-600 transition-colors">Abstract</a>
+                <a href="#methodology" class="text-gray-600 hover:text-blue-600 transition-colors">Methodology</a>
+                <a href="#results" class="text-gray-600 hover:text-blue-600 transition-colors">Results</a>
+                <a href="#citation" class="text-gray-600 hover:text-blue-600 transition-colors">Citation</a>
+                <a href="https://arxiv.org/pdf/2503.04615" target="_blank" class="font-semibold text-blue-600 hover:text-blue-800 transition-colors">📄 Read Paper</a>
+                <a href="https://github.com/rahul0m9/HalluCounter" target="_blank" class="font-semibold text-blue-600 hover:text-blue-800 transition-colors">🔗 View Code</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#abstract" class="block py-2 text-gray-600 hover:text-blue-600">Abstract</a>
+            <a href="#methodology" class="block py-2 text-gray-600 hover:text-blue-600">Methodology</a>
+            <a href="#results" class="block py-2 text-gray-600 hover:text-blue-600">Results</a>
+            <a href="#citation" class="block py-2 text-gray-600 hover:text-blue-600">Citation</a>
+            <a href="https://arxiv.org/pdf/2503.04615" target="_blank" class="block py-2 font-semibold text-blue-600 hover:text-blue-800">📄 Read Paper</a>
+            <a href="https://github.com/rahul0m9/HalluCounter" target="_blank" class="block py-2 font-semibold text-blue-600 hover:text-blue-800">🔗 View Code</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- Title and Authors -->
+        <section class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+                Hallu Counter: Reference-free LLM Hallucination Detection in the Wild!
+            </h2>
+            <p class="text-lg text-gray-500 mb-8">Published on arXiv:2503.04615v2 [cs.CL] 27 May 2025</p>
+            <div class="flex justify-center flex-wrap gap-x-6 gap-y-2 text-lg mb-4">
+                <span class="font-medium text-gray-800">Ashok Urlana<sup>1,2</sup></span>
+                <span class="font-medium text-gray-800">Gopichand Kanumolu<sup>2</sup></span>
+                <span class="font-medium text-gray-800">Charaka Vinayak Kumar<sup>2</sup></span>
+                <span class="font-medium text-gray-800">Bala Mallikarjunarao Garlapati<sup>2</sup></span>
+                <span class="font-medium text-gray-800">Rahul Mishra<sup>1,3</sup></span>
+            </div>
+            <div class="flex justify-center flex-wrap gap-x-6 gap-y-1 text-md text-gray-600">
+                <span><sup>1</sup>IIIT Hyderabad</span>
+                <span><sup>2</sup>TCS Research, Hyderabad, India</span>
+                <span><sup>3</sup>University of Oslo, Norway</span>
+            </div>
+        </section>
+
+        <!-- Abstract Section -->
+        <section id="abstract" class="mb-20 card">
+             <div class="max-w-4xl mx-auto">
+                <h3 class="section-title">Abstract</h3>
+                <p class="text-lg leading-relaxed text-gray-700">
+                    Response consistency-based, reference-free hallucination detection (RFHD) methods do not depend on internal model states, such as generation probabilities or gradients, which Grey-box models typically rely on but are inaccessible in closed-source LLMs. However, their inability to capture query-response alignment patterns often results in lower detection accuracy. Additionally, the lack of large-scale benchmark datasets spanning diverse domains remains a challenge, as most existing datasets are limited in size and scope. To this end, we propose HalluCounter, a novel reference-free hallucination detection method that utilizes both response-response and query-response consistency and alignment patterns. This enables the training of a classifier that detects hallucinations and provides a confidence score and an optimal response for user queries. Furthermore, we introduce HalluCounterEval, a benchmark dataset comprising both synthetically generated and human-curated samples across multiple domains. Our method outperforms state-of-the-art approaches by a significant margin, achieving over 90% average confidence in hallucination detection across datasets.
+                </p>
+            </div>
+        </section>
+
+        <!-- Methodology Section -->
+        <section id="methodology" class="mb-20">
+            <h3 class="section-title">Methodology &amp; Findings</h3>
+            <div class="max-w-6xl mx-auto">
+                <div class="card mb-12">
+                     <h4 class="text-2xl font-bold text-gray-800 mb-6 text-center">HalluCounter Pipeline</h4>
+                     <p class="text-sm text-gray-500 text-center mb-6">
+                         The HalluCounter pipeline operates in three main stages: extracting NLI features, classifying responses, and generating the final prediction with a confidence score and optimal response.
+                     </p>
+                     <!-- Figure 1 from the paper -->
+                     <img src="https://placehold.co/800x400/e2e8f0/475569?text=HalluCounter+Pipeline+Diagram" alt="HalluCounter pipeline diagram" class="rounded-lg shadow-md border border-gray-200 w-full">
+                     <p class="text-sm text-gray-500 mt-2 text-center">
+                        Fig 1. HalluCounter: A reference-free Hallucination Detection Pipeline.
+                    </p>
+                    <div class="mt-6">
+                        <h5 class="text-xl font-bold text-gray-800 mb-4">Key Pipeline Components:</h5>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>**Extracting NLI Features:** We extract Natural Language Inference (NLI) features for both Query-Response (Q-R) and Response-Response (R-R) pairs using a fine-tuned DeBERTa-v3-large cross-encoder model.</li>
+                            <li>**Hallucination Classifier:** A classifier, built with either a statistical ensemble or a BERT-based model, takes the NLI features to predict if a response is a hallucination (1) or not (0).</li>
+                            <li>**Optimal Response & Confidence:** The pipeline aggregates individual predictions to determine an overall prediction, provides a confidence score, and identifies the least hallucinated response as the optimal one.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="card">
+                    <h4 class="text-2xl font-bold text-gray-800 mb-6 text-center">Dataset and Evaluation</h4>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h5 class="font-semibold text-xl mb-2 text-blue-700">HalluCounterEval Dataset</h5>
+                            <p class="text-sm">We introduce a large-scale, multi-domain benchmark dataset for the RFHD task, comprising both synthetic and human-annotated samples across various fields, including factual queries, mathematical reasoning, and general knowledge. The dataset creation involved rule-based filtration and rigorous human annotation with an Inter-Annotator Agreement of 0.83.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-xl mb-2 text-blue-700">Key Findings</h5>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                <li>HalluCounter significantly outperforms state-of-the-art methods like SelfCheckGPT and InterrogateLLM.</li>
+                                <li>The pipeline achieves over 90% average confidence in hallucination detection across different datasets.</li>
+                                <li>Performance remains stable despite varying the number of sample responses.</li>
+                                <li>LLMs show a higher tendency to hallucinate on questions requiring mathematical reasoning and scientific factual knowledge.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Visual and Contributions -->
+        <section id="results" class="mb-20">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="card">
+                    <h4 class="text-2xl font-bold text-gray-800 mb-4">Hallucination Rate Across Domains</h4>
+                    <!-- Placeholder image for Figure 2 from the paper -->
+                    <img src="https://placehold.co/800x400/e2e8f0/475569?text=Hallucination+Rates+Across+Domains" alt="Bar chart showing hallucination rates across different sub-domains for various LLMs" class="rounded-lg shadow-md border border-gray-200 w-full">
+                    <p class="text-sm text-gray-500 mt-2 text-center">
+                        Fig 2. Hallucination rates across different sub-domains in various test sets.
+                    </p>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold text-gray-800 mb-4">Key Contributions</h4>
+                    <ul class="space-y-4 text-lg">
+                        <li class="flex items-start">
+                            <span class="text-blue-500 font-bold mr-3">1.</span>
+                            <span>We introduce <strong>HalluCounter</strong>, a novel approach for the Reference-Free Hallucination Detection (RFHD) task.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 font-bold mr-3">2.</span>
+                            <span>We present a large-scale, multi-domain benchmark dataset, <strong>HalluCounterEval</strong>, for the RFHD task.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 font-bold mr-3">3.</span>
+                            <span>We conduct <strong>extensive experiments and ablation studies</strong> to evaluate various feature combinations, classifiers, and LLMs.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Citation Section -->
+        <section id="citation" class="mb-20">
+            <div class="max-w-4xl mx-auto card">
+                <h3 class="section-title">Citation</h3>
+                <p class="text-center text-lg mb-6">If you find our work useful, please consider citing:</p>
+                <div class="bg-gray-100 rounded-lg p-6 font-mono text-sm text-gray-800 relative">
+                    <button onclick="copyCitation()" class="absolute top-2 right-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-sans text-xs font-semibold py-1 px-2 rounded-md transition-colors">Copy</button>
+                    <pre id="citation-text" class="whitespace-pre-wrap"><code>@article{urlana2025hallu,
+  title={Hallu Counter: Reference-free LLM Hallucination Detection in the Wild!},
+  author={Urlana, Ashok and Kanumolu, Gopichand and Kumar, Charaka Vinayak and Garlapati, Bala Mallikarjunarao and Mishra, Rahul},
+  journal={arXiv preprint arXiv:2503.04615},
+  year={2025}
+}</code></pre>
+                </div>
+                <div id="copy-feedback" class="text-center mt-4 text-green-600 font-semibold opacity-0 transition-opacity">
+                    Copied to clipboard!
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2025 The Hallu Counter Authors. All Rights Reserved.</p>
+            <p class="text-sm text-gray-400 mt-2">This website is hosted on <a href="https://pages.github.com/" target="_blank" class="underline hover:text-gray-200">GitHub Pages</a>.</p>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // JavaScript for copying citation
+        function copyCitation() {
+            const citationText = document.getElementById('citation-text').innerText;
+            const feedback = document.getElementById('copy-feedback');
+            
+            // Use a temporary element to copy text
+            const textArea = document.createElement('textarea');
+            textArea.value = citationText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                feedback.style.opacity = '1';
+                setTimeout(() => {
+                    feedback.style.opacity = '0';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                // Note: We use a custom message instead of alert()
+                const messageBox = document.createElement('div');
+                messageBox.innerText = 'Failed to copy citation. Please copy manually.';
+                messageBox.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-md shadow-lg z-50';
+                document.body.appendChild(messageBox);
+                setTimeout(() => {
+                    document.body.removeChild(messageBox);
+                }, 3000);
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
